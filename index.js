@@ -12,14 +12,14 @@ var silenced = { }
 
 bot.on("ready", () => {
     console.log("Startup complete. Logged in as " + bot.user.username) // This is what is outputed into the console to show the bot has been launched
-    bot.user.setGame("Start with . on " + bot.guilds.size + " Servers" ) // This setting the game that it is playing on boot bot.guilds.size is the the amount of server it is on displayed as an integer
+    bot.user.setGame("AltaBot | .hello" ) // This setting the game that it is playing on boot bot.guilds.size is the the amount of server it is on displayed as an integer
 })
 bot.on("guildCreate", guild => {
- bot.user.setGame("Start with . on " + bot.guilds.size + " Servers" )
+ bot.user.setGame("AltaBot | .hello" )
 })
 
 bot.on("guildDelete", guild => {
- bot.user.setGame("Start with . on " + bot.guilds.size + " Servers" )
+ bot.user.setGame("AltaBot | .hello" )
 })
 
 bot.on("message", msg => {
@@ -31,7 +31,7 @@ bot.on("message", msg => {
     let cmd = msg.content.split(" ")[0]
     cmd = cmd.slice(prefixes[msg.guild.id].length)
     let args = msg.content.split(" ").slice(1)
-    if (cmd == "announce" && msg.author.id == "252001272146821120") {
+    if (cmd == "announce" && msg.author.id == "INSERT ID HERE") {
         msg = args.join(" ")
         bot.guilds.forEach((guild) => {
             guild.defaultChannel.sendEmbed(
@@ -51,7 +51,7 @@ bot.on("message", msg => {
             .setTitle("Hello")
             .setColor("#16a085")
             .setAuthor("Alta", bot.user.displayAvatarURL)
-            .setDescription("Hey, I am Alta I am an opensource bot by Turbomarshmello#3416 and I do cool stuff. Do .help for my commands! :P")
+            .setDescription("Hey, I am Alta, an opensource bot by Turbomarshmello#3416 and ohlookitsderpy#3799 and I do cool stuff. Do .help for my commands! :P")
         )
     }
     if (cmd == "help") {
@@ -59,7 +59,7 @@ bot.on("message", msg => {
             new Discord.RichEmbed()
             .setTitle("Help")
             .setColor("#16a085")
-            .setAuthor("Mello Help Page 1", bot.user.displayAvatarURL)
+            .setAuthor("AltaBot Help", bot.user.displayAvatarURL)
             .setDescription("**Commands**\nInsert your commands here")
         )
         msg.channel.sendMessage("Check your Direct Messages. :mailbox_with_mail: ")
@@ -69,7 +69,7 @@ bot.on("message", msg => {
         try {
             result = eval(args.join(" "))
         } catch(err) {
-            return msg.channel.sendMessage(":x: There is an error The error is in console " + console.log(err))
+            return msg.channel.sendMessage(":x: There is an error, and the error is in the console: " + console.log(err))
         }
         msg.channel.sendMessage(":white_check_mark: Eval results: " + result)
     }
@@ -122,12 +122,12 @@ bot.on("message", msg => {
         }
     if (cmd === "ban") {
         if (!msg.member.hasPermission("BAN_MEMBERS")) {
-            return msg.channel.sendMessage("Sorry, you don't have the required permissions to ban members from the server.")
+            return msg.channel.sendMessage(":x: | Sorry, you don't have the required permissions to ban members from the server.")
         }
-        if (!msg.guild.member(bot.user.id).hasPermission("BAN_MEMBERS")) { return msg.channel.send("I cannot ban members, since I do not have the permission to. Check your roles")}
+        if (!msg.guild.member(bot.user.id).hasPermission("BAN_MEMBERS")) { return msg.channel.send(":x: | I cannot ban members, since I do not have the permission to. Check your roles")}
         let user = msg.mentions.users.first()
         if (!user) { return msg.channel.send("Sorry, but you must specify a user.")}
-        if (!msg.guild.member(user.id).bannable) { return msg.channel.send(":x: I can't ban this user.")}
+        if (!msg.guild.member(user.id).bannable) { return msg.channel.send(":x: | I can't ban this user.")}
         if (args[2]) {
             reason = args.slice(2).join(" ")
         } else {
@@ -152,4 +152,4 @@ bot.on("message", msg => {
     }
 });
 
-bot.login(require("./config.json").token)
+bot.login("INSERT TOKEN HERE")
