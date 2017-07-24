@@ -28,7 +28,7 @@ bot.on("message", msg => {
     if (silenced[msg.author.id] && silenced[msg.author.id].type == "user" && silenced[msg.author.id].active) { return;}
     if (silenced[msg.guild.id] && silenced[msg.guild.id].type == "guild" && silenced[msg.guild.id].active) { return;}
     if (!msg.content.startsWith(prefixes[msg.guild.id])) {return;}
-    let cmd = msg.content.split(" ")[0]
+   let cmd = msg.content.toLowerCase().split(" ")[0]
     cmd = cmd.slice(prefixes[msg.guild.id].length)
     let args = msg.content.split(" ").slice(1)
     if (cmd == "announce" && msg.author.id == "INSERT ID HERE") {
