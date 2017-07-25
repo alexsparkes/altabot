@@ -1,7 +1,7 @@
 const Discord = require("discord.js")
 const chancejs = require("chance")
 const fs = require("fs");
-const prefix = "."
+const prefix = (require("./config.json").prefix)
 const chance = new chancejs()
 const bot = new Discord.Client()
 const settings = { }
@@ -9,7 +9,23 @@ var servers = {}
 const superagent = require("superagent")
 var silenced = { }
 
+function saveRestricted() {
+  fs.writeFile("./restricted.json", JSON.stringify(silenced), function(err) {
+    if (err) {
+      return console.log(err)
+    }
+  });
+}
+
+function loadRestricted() {
+  fs.readFile('./restricted.json','utf8', function (err, data) {
+    if (err) console.log(err)
+    silenced = JSON.parse(data)
+  })
+}
+
 bot.on("ready", () => {
+      loadRestricted()
     console.log("Startup complete. Logged in as " + bot.user.username) // This is what is outputed into the console to show the bot has been launched
     bot.user.setGame("Start with " + prefix + " on "  + bot.guilds.size + " Servers" ) // This setting the game that it is playing on boot bot.guilds.size is the the amount of server it is on displayed as an integer
 })
@@ -23,8 +39,7 @@ bot.on("guildDelete", guild => {
 
 bot.on("message", msg => {
     if(!msg.guild) return;
-    if (silenced[msg.author.id] && silenced[msg.author.id].type == "user" && silenced[msg.author.id].active) { return;}
-    if (silenced[msg.guild.id] && silenced[msg.guild.id].type == "guild" && silenced[msg.guild.id].active) { return;}
+     if (silenced[msg.author.id] && silenced[msg.author.id].type == "user" && silenced[msg.author.id].active && msg.content.startsWith(prefix)) { return msg.channel.sendMessage("You have been blacklisted!")};
      if (!msg.content.startsWith(prefix)) {return;}
     let cmd = msg.content.split(" ")[0]
     cmd = cmd.slice(prefix.length)
@@ -33,19 +48,19 @@ bot.on("message", msg => {
         msg.channel.send(":ping_pong: The current ping is: **" + Math.round(bot.ping) + "**ms")
     }
     if (cmd == "hello") {
-        msg.channel.send({embed:  new Discord.RichEmbed().setTitle("Hello").setColor("#16a085").setAuthor("Alta", bot.user.displayAvatarURL).setDescription("Hey, I am Alta I am an opensource bot by Turbomarshmello#3416 and I do cool stuff. Do .help for my commands! :P")})
+        msg.channel.send({embed:  new Discord.RichEmbed().setTitle("Hello").setColor("#16a085").setAuthor("Alta", bot.user.displayAvatarURL).setDescription("Hey, I am Alta, an opensource bot by Turbomarshmello#3416 with grammar fixes by ohlookitsderpy#3799. I do cool stuff. Do .help for my commands! :P")})
     }
     if (cmd == "help") {
-        msg.author.sendEmbed( msg.channel.send({embed: Discord.RichEmbed().setTitle("Help") .setColor("#16a085").setAuthor(bot.user.username  + " Help Page 1", bot.user.displayAvatarURL).setDescription("**Commands**\nInsert your commands here")}).then(msg=>msg.channel.send('Check your Direct Messages. :mailbox_with_mail: ')));
+         msg.author.send({embed: new Discord.RichEmbed().setTitle("Help") .setColor("#16a085").setAuthor(bot.user.username  + " Help Page 1", bot.user.displayAvatarURL).setDescription("**Commands**\nInsert your commands here")}).then(msg=>msg.channel.send('Check your Direct Messages. :mailbox_with_mail: '));
     }
     if (cmd == "eval" && msg.author.id === "YOUR USER ID") { // This can also be added after the || command == "eval" && msg.author.id === "A TRUST WORTHY FRIEND'S ID" " 
         let result
         try {
             result = eval(args.join(" "))
         } catch(err) {
-            return msg.channel.sendMessage(":x: There is an error The error is in console " + console.log(err))
+            return msg.channel.send(":x: There is an error The error is in console " + console.log(err))
         }
-        msg.channel.sendMessage(":white_check_mark: Eval results: " + result)
+        msg.channel.send(":white_check_mark: Eval results: " + result)
     }
         if (cmd == "cat") {
          superagent.get("https://random.cat/meow", (err, res) => {
@@ -60,6 +75,42 @@ bot.on("message", msg => {
                 msg.channel.send("", {embed: new Discord.RichEmbed().setTitle("Random Dog").setImage(res.body.url).setFooter("Image by random.dog")})
             })
         }
+        if (cmd == "blacklist" && msg.author.id == "252001272146821120") {
+        if (args[0] == "user") {
+            let user = msg.mentions.users.first()
+            if (user == undefined || user == null) {
+                return msg.channel.send("Syntax: blacklist <user/id/guild> <user @mention/user id/guild id>")
+            }
+            msg.channel.send(user.username + " Has been blacklisted" + " Their ID (" + user.id + ").")
+            silenced[user.id] = {"type":"user", "active":true}
+        } else if (args[0] == "id") {
+            let id = args[1]
+            if (id == undefined || id == null) {
+                return msg.channel.send("Syntax: blacklist <user/id/guild> <user @mention/user id/guild id>")
+            }
+            msg.channel.sendMessage("Blacklisting user ID " + id + ".")
+            silenced[id] = {"type":"user", "active":true}
+        }
+        saveRestricted()
+    }
+    if (cmd == "unblacklist" && msg.author.id == "252001272146821120") {
+        if (args[0] == "user") {
+            let user = msg.mentions.users.first()
+            if (user == undefined || user == null) {
+                return msg.channel.send("Syntax: unblacklist <user/id/guild> <user @mention/user id/guild id>")
+            }
+            msg.channel.send(user.username + " Has been un-blacklisted" + " Their ID (" + user.id + ").")
+            silenced[user.id] = {"type": "user", "active": false}
+        } else if (args[0] == "id") {
+            let id = args[1]
+            if (id == undefined || id == null) {
+                return msg.channel.send("Syntax: unblacklist <user/id/guild> <user @mention/user id/guild id>")
+            }
+            msg.channel.sendMessage("Un-blacklisting user ID " + id + ".")
+            silenced[id] = {"type":"user", "active":false}
+        }
+        saveRestricted()
+    }
     if (cmd === "kick") {
         if (!msg.member.hasPermission("KICK_MEMBERS")) {
             return msg.channel.send("Sorry, you don't have the required permissions to kick members from this server.")
