@@ -14,11 +14,11 @@ bot.on("ready", () => {
     bot.user.setGame("Start with " + prefix + " on "  + bot.guilds.size + " Servers" ) // This setting the game that it is playing on boot bot.guilds.size is the the amount of server it is on displayed as an integer
 })
 bot.on("guildCreate", guild => {
- bot.user.setGame("Start with " + prefix +  " on " + bot.guilds.size + " Servers" )
+ bot.user.setGame("AltaBot | .hello" )
 })
 
 bot.on("guildDelete", guild => {
- bot.user.setGame("Start with " + prefix +  " on " + bot.guilds.size + " Servers" )
+ bot.user.setGame("AltaBot | .hello" )
 })
 
 bot.on("message", msg => {
@@ -33,7 +33,7 @@ bot.on("message", msg => {
         msg.channel.send(":ping_pong: The current ping is: **" + Math.round(bot.ping) + "**ms")
     }
     if (cmd == "hello") {
-        msg.channel.send({embed:  new Discord.RichEmbed().setTitle("Hello").setColor("#16a085").setAuthor("Alta", bot.user.displayAvatarURL).setDescription("Hey, I am Alta I am an opensource bot by Turbomarshmello#3416 and I do cool stuff. Do .help for my commands! :P")})
+        msg.channel.send({embed:  new Discord.RichEmbed().setTitle("Hello").setColor("#16a085").setAuthor("Alta", bot.user.displayAvatarURL).setDescription("Hey, I am Alta, an opensource bot by Turbomarshmello#3416 and ohlookitsderpy#3799. I do cool stuff. Do .help for my commands! :P")})
     }
     if (cmd == "help") {
         msg.author.sendEmbed( msg.channel.send({embed: Discord.RichEmbed().setTitle("Help") .setColor("#16a085").setAuthor(bot.user.username  + " Help Page 1", bot.user.displayAvatarURL).setDescription("**Commands**\nInsert your commands here")}).then(msg=>msg.channel.send('Check your Direct Messages. :mailbox_with_mail: ')));
