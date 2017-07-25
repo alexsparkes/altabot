@@ -4,7 +4,6 @@ const fs = require("fs");
 const prefix = "."
 const chance = new chancejs()
 const bot = new Discord.Client()
-const prefixes = { }
 const settings = { }
 var servers = {}
 const superagent = require("superagent")
@@ -12,36 +11,24 @@ var silenced = { }
 
 bot.on("ready", () => {
     console.log("Startup complete. Logged in as " + bot.user.username) // This is what is outputed into the console to show the bot has been launched
-    bot.user.setGame("AltaBot | .hello" ) // This setting the game that it is playing on boot bot.guilds.size is the the amount of server it is on displayed as an integer
+    bot.user.setGame("Start with " + prefix + " on "  + bot.guilds.size + " Servers" ) // This setting the game that it is playing on boot bot.guilds.size is the the amount of server it is on displayed as an integer
 })
 bot.on("guildCreate", guild => {
- bot.user.setGame("AltaBot | .hello" )
+ bot.user.setGame("Start with " + prefix +  " on " + bot.guilds.size + " Servers" )
 })
 
 bot.on("guildDelete", guild => {
- bot.user.setGame("AltaBot | .hello" )
+ bot.user.setGame("Start with " + prefix +  " on " + bot.guilds.size + " Servers" )
 })
 
 bot.on("message", msg => {
     if (!msg.guild) { return }
-    if (msg.content.startsWith(prefix) && !prefixes[msg.guild.id]) { prefixes[msg.guild.id] = prefix }
     if (silenced[msg.author.id] && silenced[msg.author.id].type == "user" && silenced[msg.author.id].active) { return;}
     if (silenced[msg.guild.id] && silenced[msg.guild.id].type == "guild" && silenced[msg.guild.id].active) { return;}
-    if (!msg.content.startsWith(prefixes[msg.guild.id])) {return;}
-   let cmd = msg.content.toLowerCase().split(" ")[0]
-    cmd = cmd.slice(prefixes[msg.guild.id].length)
+     if (!msg.content.startsWith(prefix)) {return;}
+    let cmd = msg.content.split(" ")[0]
+    cmd = cmd.slice(prefix.length)
     let args = msg.content.split(" ").slice(1)
-    if (cmd == "announce" && msg.author.id == "INSERT ID HERE") {
-        msg = args.join(" ")
-        bot.guilds.forEach((guild) => {
-            guild.defaultChannel.sendEmbed(
-                new Discord.RichEmbed()
-                .setTitle("AltaBot Announcement")
-                .setDescription("" + msg + "")
-                .setColor("#2980b9")
-            )
-        });
-    }
     if (cmd == "ping") {
         msg.channel.sendMessage(":ping_pong: The current ping is: **" + Math.round(bot.ping) + "**ms")
     }
@@ -51,7 +38,7 @@ bot.on("message", msg => {
             .setTitle("Hello")
             .setColor("#16a085")
             .setAuthor("Alta", bot.user.displayAvatarURL)
-            .setDescription("Hey, I am Alta, an opensource bot by Turbomarshmello#3416 and ohlookitsderpy#3799 and I do cool stuff. Do .help for my commands! :P")
+            .setDescription("Hey, I am Alta I am an opensource bot by Turbomarshmello#3416 and I do cool stuff. Do .help for my commands! :P")
         )
     }
     if (cmd == "help") {
@@ -59,7 +46,7 @@ bot.on("message", msg => {
             new Discord.RichEmbed()
             .setTitle("Help")
             .setColor("#16a085")
-            .setAuthor("AltaBot Help", bot.user.displayAvatarURL)
+            .setAuthor("Mello Help Page 1", bot.user.displayAvatarURL)
             .setDescription("**Commands**\nInsert your commands here")
         )
         msg.channel.sendMessage("Check your Direct Messages. :mailbox_with_mail: ")
@@ -69,7 +56,7 @@ bot.on("message", msg => {
         try {
             result = eval(args.join(" "))
         } catch(err) {
-            return msg.channel.sendMessage(":x: There is an error, and the error is in the console: " + console.log(err))
+            return msg.channel.sendMessage(":x: There is an error The error is in console " + console.log(err))
         }
         msg.channel.sendMessage(":white_check_mark: Eval results: " + result)
     }
@@ -122,12 +109,12 @@ bot.on("message", msg => {
         }
     if (cmd === "ban") {
         if (!msg.member.hasPermission("BAN_MEMBERS")) {
-            return msg.channel.sendMessage(":x: | Sorry, you don't have the required permissions to ban members from the server.")
+            return msg.channel.sendMessage("Sorry, you don't have the required permissions to ban members from the server.")
         }
-        if (!msg.guild.member(bot.user.id).hasPermission("BAN_MEMBERS")) { return msg.channel.send(":x: | I cannot ban members, since I do not have the permission to. Check your roles")}
+        if (!msg.guild.member(bot.user.id).hasPermission("BAN_MEMBERS")) { return msg.channel.send("I cannot ban members, since I do not have the permission to. Check your roles")}
         let user = msg.mentions.users.first()
         if (!user) { return msg.channel.send("Sorry, but you must specify a user.")}
-        if (!msg.guild.member(user.id).bannable) { return msg.channel.send(":x: | I can't ban this user.")}
+        if (!msg.guild.member(user.id).bannable) { return msg.channel.send(":x: I can't ban this user.")}
         if (args[2]) {
             reason = args.slice(2).join(" ")
         } else {
@@ -145,11 +132,11 @@ bot.on("message", msg => {
         msg.channel.sendEmbed(
             new Discord.RichEmbed()
             .setColor("#16a085")
-            .setTitle("Statistics")
+            .setTitle(bot.user.username + "Statistics")
             .setDescription("**Servers** - " + bot.guilds.size + "\n**Users** - " + bot.users.size + "\n**Library** - Discord.js")
         )
 
     }
 });
 
-bot.login("INSERT TOKEN HERE")
+bot.login(require("./config.json").token)
