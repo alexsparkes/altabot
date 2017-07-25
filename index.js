@@ -22,7 +22,7 @@ bot.on("guildDelete", guild => {
 })
 
 bot.on("message", msg => {
-    if (!msg.guild) { return }
+    if(!msg.guild) return;
     if (silenced[msg.author.id] && silenced[msg.author.id].type == "user" && silenced[msg.author.id].active) { return;}
     if (silenced[msg.guild.id] && silenced[msg.guild.id].type == "guild" && silenced[msg.guild.id].active) { return;}
      if (!msg.content.startsWith(prefix)) {return;}
@@ -30,26 +30,13 @@ bot.on("message", msg => {
     cmd = cmd.slice(prefix.length)
     let args = msg.content.split(" ").slice(1)
     if (cmd == "ping") {
-        msg.channel.sendMessage(":ping_pong: The current ping is: **" + Math.round(bot.ping) + "**ms")
+        msg.channel.send(":ping_pong: The current ping is: **" + Math.round(bot.ping) + "**ms")
     }
     if (cmd == "hello") {
-        msg.channel.sendEmbed(
-            new Discord.RichEmbed()
-            .setTitle("Hello")
-            .setColor("#16a085")
-            .setAuthor("Alta", bot.user.displayAvatarURL)
-            .setDescription("Hey, I am Alta I am an opensource bot by Turbomarshmello#3416 and I do cool stuff. Do .help for my commands! :P")
-        )
+        msg.channel.send({embed:  new Discord.RichEmbed().setTitle("Hello").setColor("#16a085").setAuthor("Alta", bot.user.displayAvatarURL).setDescription("Hey, I am Alta I am an opensource bot by Turbomarshmello#3416 and I do cool stuff. Do .help for my commands! :P")})
     }
     if (cmd == "help") {
-        msg.author.sendEmbed(
-            new Discord.RichEmbed()
-            .setTitle("Help")
-            .setColor("#16a085")
-            .setAuthor("Mello Help Page 1", bot.user.displayAvatarURL)
-            .setDescription("**Commands**\nInsert your commands here")
-        )
-        msg.channel.sendMessage("Check your Direct Messages. :mailbox_with_mail: ")
+        msg.author.sendEmbed( msg.channel.send({embed: Discord.RichEmbed().setTitle("Help") .setColor("#16a085").setAuthor(bot.user.username  + " Help Page 1", bot.user.displayAvatarURL).setDescription("**Commands**\nInsert your commands here")}).then(msg=>msg.channel.send('Check your Direct Messages. :mailbox_with_mail: ')));
     }
     if (cmd == "eval" && msg.author.id === "YOUR USER ID") { // This can also be added after the || command == "eval" && msg.author.id === "A TRUST WORTHY FRIEND'S ID" " 
         let result
@@ -132,7 +119,7 @@ bot.on("message", msg => {
         msg.channel.sendEmbed(
             new Discord.RichEmbed()
             .setColor("#16a085")
-            .setTitle(bot.user.username + "Statistics")
+            .setTitle(bot.user.username + " Statistics")
             .setDescription("**Servers** - " + bot.guilds.size + "\n**Users** - " + bot.users.size + "\n**Library** - Discord.js")
         )
 
