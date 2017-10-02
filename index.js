@@ -2,6 +2,7 @@ const Discord = require("discord.js")
 const chancejs = require("chance")
 const fs = require("fs");
 const prefix = (require("./config.json").prefix)
+const owner = (require("./config.json").ownerid)
 const chance = new chancejs()
 const bot = new Discord.Client()
 const settings = { }
@@ -53,7 +54,7 @@ bot.on("message", msg => {
     if (cmd == "help") {
          msg.author.send({embed: new Discord.RichEmbed().setTitle("Help") .setColor("#16a085").setAuthor(bot.user.username  + " Help Page 1", bot.user.displayAvatarURL).setDescription("**Commands**\nInsert your commands here")}).then(msg=>msg.channel.send('Check your Direct Messages. :mailbox_with_mail: '));
     }
-    if (cmd == "eval" && msg.author.id === "YOUR USER ID") { // This can also be added after the || command == "eval" && msg.author.id === "A TRUST WORTHY FRIEND'S ID" " 
+    if (cmd == "eval" && msg.author.id === owner) { // This can also be added after the || command == "eval" && msg.author.id === "A TRUST WORTHY FRIEND'S ID" " 
         let result
         try {
             result = eval(args.join(" "))
@@ -75,7 +76,7 @@ bot.on("message", msg => {
                 msg.channel.send("", {embed: new Discord.RichEmbed().setTitle("Random Dog").setImage(res.body.url).setFooter("Image by random.dog")})
             })
         }
-        if (cmd == "blacklist" && msg.author.id == "252001272146821120") {
+        if (cmd == "blacklist" && msg.author.id == owner) {
         if (args[0] == "user") {
             let user = msg.mentions.users.first()
             if (user == undefined || user == null) {
@@ -93,7 +94,7 @@ bot.on("message", msg => {
         }
         saveRestricted()
     }
-    if (cmd == "unblacklist" && msg.author.id == "252001272146821120") {
+    if (cmd == "unblacklist" && msg.author.id == owner) {
         if (args[0] == "user") {
             let user = msg.mentions.users.first()
             if (user == undefined || user == null) {
@@ -171,7 +172,7 @@ bot.on("message", msg => {
             new Discord.RichEmbed()
             .setColor("#16a085")
             .setTitle(bot.user.username + " Statistics")
-            .setDescription("**Servers** - " + bot.guilds.size + "\n**Users** - " + bot.users.size + "\n**Library** - Discord.js")
+            .setDescription("**Servers** - " + bot.guilds.size + "\n**Users** - " + bot.users.size + "\n**Channels** - " + bot.channels.size + "")
         )
 
     }
